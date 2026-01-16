@@ -3,11 +3,11 @@ import { LockFilled, UserOutlined, LockOutlined } from '@ant-design/icons';
 import Logo from '../../components/icons/Logo';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Credentials } from '../../types';
-import { login, self } from '../../http/api';
+import { login, self, logout } from '../../http/api';
 import { useAuthStore } from '../../store';
+import { usePermission } from '../../hooks/usePermission';
 
 const loginUser = async (credentials: Credentials) => {
-    // server call logic
     const { data } = await login(credentials);
     return data;
 };
@@ -18,11 +18,10 @@ const getSelf = async () => {
 };
 
 const LoginPage = () => {   
-    const { setUser } = useAuthStore();
+    const { isAllowed } = usePermission();
+    const { setUser, logout: logoutFromStore } = useAuthStore();
 
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { data: selfData, refetch } = useQuery({
+    const { refetch } = useQuery({
         queryKey: ['self'],
         queryFn: getSelf,
         enabled: false,
@@ -34,6 +33,15 @@ const LoginPage = () => {
         mutationFn: loginUser,
         onSuccess: async () => {
             const selfDataPromise = await refetch();
+            // logout or redirect to client ui
+            // window.location.href = "http://clientui/url"
+            // "admin", "manager", "customer"
+            if (!isAllowed(selfDataPromise.data)) {
+                await logout();
+                logoutFromStore();
+                return;
+            }  
+
             setUser(selfDataPromise.data);
         },
     });
