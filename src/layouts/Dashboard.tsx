@@ -89,8 +89,12 @@ const Dashboard = () => {
                     <div className="logo">
                         <Logo />
                     </div>
-
-                    <Menu theme="light" defaultSelectedKeys={['/']} mode="inline" items={items} />
+                    <Menu
+                        theme="light"
+                        defaultSelectedKeys={[location.pathname]}
+                        mode="inline"
+                        items={items}
+                    />
                 </Sider>
                 <Layout>
                     <Header
