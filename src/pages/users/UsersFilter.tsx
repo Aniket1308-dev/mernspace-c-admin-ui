@@ -3,7 +3,7 @@ import { Card, Col, Form, Input, Row, Select } from 'antd';
 type UsersFilterProps = {
     children?: React.ReactNode;
 
-    onFilterChange: (filterName: string, filterValue: string) => void;
+    onFilterChange?: (filterName: string, filterValue: string) => void;
 };
 const UsersFilter = ({ children }: UsersFilterProps) => {
     return (
